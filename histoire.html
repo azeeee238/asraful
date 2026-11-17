@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Léa - Manuel d'Histoire Universel (jusqu'en 2026)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .chat-container {
+            width: 440px;
+            height: 650px;
+            background: #1e293b;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #334155;
+        }
+        .chat-header {
+            background: #0ea5e9;
+            color: white;
+            padding: 16px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .message {
+            max-width: 88%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-size: 0.93rem;
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+        .message.bot { background: #334155; color: #f8fafc; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .message.user { background: #0ea5e9; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .chat-input-area {
+            display: flex;
+            padding: 12px;
+            background: #0f172a;
+            border-top: 1px solid #334155;
+        }
+        .chat-input-area input {
+            flex: 1;
+            padding: 10px 14px;
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            color: white;
+            outline: none;
+            font-size: 0.95rem;
+        }
+        .chat-input-area button {
+            background: #0ea5e9;
+            color: white;
+            border: none;
+            padding: 0 16px;
+            margin-left: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .chat-input-area button:hover { background: #0284c7; }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <span>🌍 Léa - Manuel d'Histoire (Jusqu'en 2026)</span>
+            <a href="index.html" class="back-btn">Menu 🏠</a>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">Coucou ma pupuce ! C'est Léa version Manuel d'Histoire Géant & Moderne. 
+Le dictionnaire intègre l'Antiquité, les guerres, mais aussi les événements jusqu'en 2026 (Mur de Berlin, Bataclan, JO de Paris...). Teste ce que tu veux !</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="userInput" placeholder="Ex: 2024, bataclan, 1789, rome..." autofocus>
+            <button id="sendBtn">Envoyer</button>
+        </div>
+    </div>
+
+    <script>
+        const inputField = document.getElementById("userInput");
+        const sendButton = document.getElementById("sendBtn");
+        const messagesContainer = document.getElementById("chatMessages");
+
+        sendButton.addEventListener("click", envoyerMessage);
+        inputField.addEventListener("keypress", (e) => { 
+            if (e.key === "Enter") envoyerMessage(); 
+        });
+
+        function ajouterMessage(texte, expediteur) {
+            const div = document.createElement("div");
+            div.classList.add("message", expediteur);
+            div.textContent = texte;
+            messagesContainer.appendChild(div);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // --- MANUEL D'HISTOIRE ULTIME (De -3000 à 2026) ---
+        const manuelHistoire = [
+            { mots: ["préhistoire", "paleolithique", "neolithique", "feu"], texte: "🗿 LA PRÉHISTOIRE :\n• Commence avec l'apparition de l'humanité.\n• Maîtrise du feu et art rupestre.\n• Révolution néolithique : agriculture et sédentarisation." },
+            { mots: ["-3000", "3000", "ecriture", "écriture", "sumer", "mesopotamie"], texte: "📜 -3000 : L'INVENTION DE L'ÉCRITURE :\n• Apparition des premiers signes écrits en Mésopotamie et en Égypte.\n• Fin officielle de la Préhistoire, début de l'Antiquité." },
+            { mots: ["egypte", "pyramide", "pharaon"], texte: "🏜️ L'ÉGYPTE ANCIENNE :\n• Civilisation le long du Nil dirigée par les pharaons.\n• Construction des grandes pyramides et momification." },
+            { mots: ["grece", "athenes", "democratie", "-508"], texte: "🏛️ LA GRÈCE ANTIQUE & DÉMOCRATIE :\n• Naissance de la démocratie à Athènes vers -508.\n• Philosophie, Jeux olympiques antiques." },
+            { mots: ["rome", "romain", "cesar", "jules", "empire romain"], texte: "🦅 ROME ET SON EMPIRE :\n• Fondation de Rome (-753), République puis Empire.\n• Domination de tout le bassin méditerranéen." },
+            { mots: ["476", "chute de rome", "fin de l'antiquite"], texte: "🛡️ 476 - LA CHUTE DE ROME :\n• Chute de l'Empire romain d'Occident.\n• Fin de l'Antiquité et début du Moyen Âge." },
+            { mots: ["630", "mecque", "mahomet", "mohamed", "islam"], texte: "☪️ 630 - LA CONQUÊTE DE LA MECQUE :\n• Janvier 630 (an 8 de l'Hégire), entrée victorieuse du prophète Mahomet à La Mecque.\n• Événement majeur de l'islam." },
+            { mots: ["800", "charlemagne", "noel", "empereur"], texte: "👑 800 - COURONNEMENT DE CHARLEMAGNE :\n• Charlemagne couronné empereur d'Occident à Rome par le Pape le jour de Noël." },
+            { mots: ["1096", "croisade", "jerusalem", "jérusalem"], texte: "⚔️ 1096 - LES CROISADES :\n• Départ de la première croisade vers Jérusalem." },
+            { mots: ["1492", "colomb", "amerique", "amérique", "fin du moyen age"], texte: "⛵ 1492 - DÉCOUVERTE DE L'AMÉRIQUE :\n• Christophe Colomb atteint l'Amérique.\n• Fin du Moyen Âge et début des Temps Modernes." },
+            { mots: ["1515", "marignan", "francois 1er", "françois 1er"], texte: "⚜️ 1515 - BATAILLE DE MARIGNAN :\n• Victoire de François Ier en Italie, début de la Renaissance en France." },
+            { mots: ["1789", "revolution", "révolution", "bastille", "louis xvi"], texte: "🇫🇷 1789 - LA RÉVOLUTION FRANÇAISE :\n• Fin de la monarchie absolue de Louis XVI.\n• Prise de la Bastille le 14 juillet.\n• Déclaration des droits de l'homme et du citoyen." },
+            { mots: ["1804", "napoleon", "napoléon", "empire"], texte: "🦅 1804 - NAPOLÉON IER EMPEREUR :\n• Napoléon Bonaparte se couronne empereur des Français.\n• Création du Code civil." },
+            { mots: ["1914", "1918", "premiere guerre", "1ère guerre"], texte: "⚔️ 1914-1918 : LA PREMIÈRE GUERRE MONDIALE :\n• Conflit mondial, tranchées, armistice le 11 novembre 1918." },
+            { mots: ["1939", "1945", "seconde guerre", "2nde guerre", "hitler", "shoah"], texte: "🔥 1939-1945 : LA SECONDE GUERRE MONDIALE :\n• Conflit le plus meurtrier de l'histoire, horreurs de la Shoah et fin de la guerre en 1945." },
+            { mots: ["1969", "lune", "apollo", "armstrong"], texte: "🚀 1969 - LES PREMIERS PAS SUR LA LUNE :\n• La mission Apollo 11 pose Neil Armstrong sur la Lune." },
+            { mots: ["1989", "mur de berlin", "berlin"], texte: "🧱 1989 - LA CHUTE DU MUR DE BERLIN :\n• Ouverture du mur séparant Berlin, symbole de la fin de la Guerre froide." },
+            { mots: ["1991", "urss", "soviétique"], texte: "☭ 1991 - DISLOCATION DE L'URSS :\n• Fin de l'Union soviétique et éclatement en plusieurs états indépendants, marquant la fin définitive de la Guerre froide." },
+            { mots: ["2001", "11 septembre", "world trade center", "twin towers"], texte: "✈️ 2001 - LES ATTENTATS DU 11 SEPTEMBRE AUX USA :\n• Attentats terroristes suicides menés par Al-Qaïda contre le World Trade Center à New York et le Pentagone, bouleversant la géopolitique mondiale." },
+            { mots: ["2002", "euro"], texte: "💶 2002 - MISE EN CIRCULATION DE L'EURO :\n• Les pièces et billets en euros remplacent les monnaies nationales (francs, deutsche marks...) dans 12 pays de l'Union européenne." },
+            { mots: ["2015", "bataclan", "13 novembre", "attentats"], texte: "🕊️ 2015 - LES ATTENTATS DU 13 NOVEMBRE & LE BATACLAN :\n• Attentats terroristes coordonnés en région parisienne (Bataclan et terrasses), marquant durablement la France." },
+            { mots: ["2020", "covid", "coronavirus", "confinement"], texte: "🦠 2020 - LA PANDÉMIE DE COVID-19 :\n• Crise sanitaire mondiale inédite entraînant des confinements massifs de populations entières à travers la planète." },
+            { mots: ["2024", "jeux olympiques", "paris 2024", "jo"], texte: "🏅 2024 - LES JEUX OLYMPIQUES DE PARIS :\n• La France accueille les Jeux olympiques et paralympiques d'été à Paris, un événement planétaire marquant." },
+            { mots: ["2025", "2026", "actuel", "moderne"], texte: "🌐 2025-2026 - ÉPOQUE CONTEMPORAINE ACTUELLE :\n• Période actuelle marquée par l'ultra-connexion, le développement fulgurant de l'intelligence artificielle et les grands défis climatiques mondiaux." }
+        ];
+
+        function analyserHistoire(texte) {
+            const t = texte.toLowerCase();
+
+            for (let item of 

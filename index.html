@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASRAFUL - Hub Principal</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .hub-container {
+            width: 440px;
+            background: #1e293b;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            border: 1px solid #334155;
+            text-align: center;
+        }
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+            color: #f8fafc;
+        }
+        p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-top: 0;
+            margin-bottom: 12px;
+        }
+        .menu-btn {
+            display: block;
+            background: #334155;
+            color: white;
+            padding: 14px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: background 0.2s, transform 0.1s;
+            border: 1px solid #475569;
+        }
+        .menu-btn:hover {
+            transform: translateY(-2px);
+        }
+        .btn-maths { background: #ec4899; border-color: #db2777; }
+        .btn-maths:hover { background: #db2777; }
+        
+        .btn-francais { background: #8b5cf6; border-color: #7c3aed; }
+        .btn-francais:hover { background: #7c3aed; }
+        
+        .btn-histoire { background: #0ea5e9; border-color: #0284c7; }
+        .btn-histoire:hover { background: #0284c7; }
+
+        .footer-note {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="hub-container">
+        <h1>✨ ASRAFUL ✨</h1>
+        <p>Choisis ta matière :</p>
+        
+        <a href="maths.html" class="menu-btn btn-maths">Maths</a>
+        <a href="francais.html" class="menu-btn btn-francais">Français</a>
+        <a href="histoire.html" class="menu-btn btn-histoire">Histoire</a>
+
+        <div class="footer-note">Système interactif local<br>Prêt pour les révisions 🚀</div>
+    </div>
+</body>
+</html>

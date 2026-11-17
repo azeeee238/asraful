@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Léa - Maths & Problèmes Pro</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .chat-container {
+            width: 420px;
+            height: 620px;
+            background: #1e293b;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #334155;
+        }
+        .chat-header {
+            background: #ec4899;
+            color: white;
+            padding: 16px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .message {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+        .message.bot { background: #334155; color: #f8fafc; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .message.user { background: #ec4899; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .chat-input-area {
+            display: flex;
+            padding: 12px;
+            background: #0f172a;
+            border-top: 1px solid #334155;
+        }
+        .chat-input-area input {
+            flex: 1;
+            padding: 10px 14px;
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            color: white;
+            outline: none;
+            font-size: 0.95rem;
+        }
+        .chat-input-area button {
+            background: #ec4899;
+            color: white;
+            border: none;
+            padding: 0 16px;
+            margin-left: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .chat-input-area button:hover { background: #db2777; }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <span>📐 Léa - Résolveur de Problèmes</span>
+            <a href="index.html" class="back-btn">Menu 🏠</a>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">Coucou ma pupuce ! C'est Léa version Maths Pro. 
+Balance ton énoncé de problème en français (ex: "Léa a 60 pommes et en achète 40 de plus, combien en tout ?") ou un calcul direct, je gère tout !</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="userInput" placeholder="Écris ton problème de maths..." autofocus>
+            <button id="sendBtn">Envoyer</button>
+        </div>
+    </div>
+
+    <script>
+        const inputField = document.getElementById("userInput");
+        const sendButton = document.getElementById("sendBtn");
+        const messagesContainer = document.getElementById("chatMessages");
+
+        sendButton.addEventListener("click", envoyerMessage);
+        inputField.addEventListener("keypress", (e) => { 
+            if (e.key === "Enter") envoyerMessage(); 
+        });
+
+        function ajouterMessage(texte, expediteur) {
+            const div = document.createElement("div");
+            div.classList.add("message", expediteur);
+            div.textContent = texte;
+            messagesContainer.appendChild(div);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // --- CERVEAU DE MATHS & COMPRÉHENSION DE TEXTE ---
+        function resoudreMaths(texte) {
+            const t = texte.toLowerCase();
+
+            // 1. Si c'est un calcul direct (ex: 12 * 5, 45/3)
+            if (/^[0-9\+\-\*\/\.\(\)\s\%]+$/.test(texte)) {
+                try {
+                    return `Calcul direct : ${texte} = ${eval(texte)}, ez. 🎯`;
+                } catch(e) {
+                    return "Oups, y a un petit souci dans ton calcul.";
+                }
+            }
+
+            // 2. Formules de géométrie classiques
+            if (t.includes("perimetre") || t.includes("cercle")) {
+                return "📐 GÉOMÉTRIE :\n• Cercle : 2 * pi * rayon (ou pi * diamètre)\n• Rectangle : 2 * (longueur + largeur)";
+            }
+            if (t.includes("aire") || t.includes("surface")) {
+                return "📐 AIRES :\n• Rectangle : longueur * largeur\n• Triangle : (base * hauteur) / 2";
+            }
+
+            // 3. Compréhension de texte de problèmes (Extraction de nombres + détection de mots-clés)
+            const nombresBruts = texte.match(/-?\d+(\.\d+)?/g);
+            
+            if (nombresBruts && nombresBruts.length >= 2) {
+                const nums = nombresBruts.map(Number);
+                const a = nums[0];
+                const b = nums[1];
+
+                // Détection de la multiplication (fois, chacun, chaque, boîtes, parts)
+                if (t.includes("fois") || t.includes("chacun") || t.includes("chaque") || t.includes("fois plus")) {
+                    let res = a * b;
+                    return `🧠 Analyse du problème :\n• J'ai repéré les nombres : ${a} et ${b}\n• Mots-clés de multiplication détectés.\n• Calcul : ${a} × ${b} = ${res}\n\n👉 Résultat : Ça fait ${res} en tout, ez ! 🎯`;
+                }
+
+                // Détection de la soustraction (reste, donne, perd, enlève, de moins)
+                if (t.includes("reste") || t.includes("donne") || t.includes("perd") || t.includes("enlève") || t.includes("moins")) {
+                    let res = a - b;
+                    return `🧠 Analyse du problème :\n• J'ai repéré les nombres : ${a} et ${b}\n• Mots-clés de soustraction détectés.\n• Calcul : ${a} - ${b} = ${res}\n\n👉 Résultat : Il reste ${res}, ez ! 👍`;
+                }
+
+                // Détection de l'addition par défaut (en tout, total, et, ajoute, de plus)
+                if (t.includes("en tout") || t.includes("total") || t.includes("et") || t.includes("ajoute") || t.includes("plus")) {
+                    let somme = nums.reduce((acc, val) => acc + val, 0);
+                    return `🧠 Analyse du problème :\n• J'ai repéré les nombres : ${nombresBruts.join(", ")}\n• Mots-clés d'addition détectés.\n• Calcul : Somme totale\n\n👉 Résultat : Le total fait ${somme}, ez ! 🎯`;
+                }
+            }
+
+            return `J'ai lu ton problème, mais reformule un peu si tu veux (avec "en tout" pour une addition, "reste" pour une soustraction, ou "fois" pour une multiplication), ou donne-moi le calcul direct !`;
+        }
+
+        function envoyerMessage() {
+            const texte = inputField.value.trim();
+            if (!texte) return;
+            
+            ajouterMessage(texte, "user");
+            inputField.value = "";
+            
+            setTimeout(() => {
+                const reponse = resoudreMaths(texte);
+                ajouterMessage(reponse, "bot");
+            }, 400);
+        }
+    </script>
+</body>
+</html>

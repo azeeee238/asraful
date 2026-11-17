@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Léa - Conjugaison Universelle</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .chat-container {
+            width: 440px;
+            height: 650px;
+            background: #1e293b;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #334155;
+        }
+        .chat-header {
+            background: #8b5cf6;
+            color: white;
+            padding: 16px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .message {
+            max-width: 88%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-size: 0.93rem;
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+        .message.bot { background: #334155; color: #f8fafc; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .message.user { background: #8b5cf6; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .chat-input-area {
+            display: flex;
+            padding: 12px;
+            background: #0f172a;
+            border-top: 1px solid #334155;
+        }
+        .chat-input-area input {
+            flex: 1;
+            padding: 10px 14px;
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            color: white;
+            outline: none;
+            font-size: 0.95rem;
+        }
+        .chat-input-area button {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 0 16px;
+            margin-left: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .chat-input-area button:hover { background: #7c3aed; }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <span>📚 Léa - Conjugaison Universelle</span>
+            <a href="index.html" class="back-btn">Menu 🏠</a>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">Coucou ma pupuce ! C'est Léa version Universelle. 
+Tu peux taper **n'importe quel verbe** (ex: "manger au futur", "grandir à l'imparfait", "courir au présent") et je le conjugue à toutes les personnes grâce aux règles de grammaire !</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="userInput" placeholder="Ex: manger au futur..." autofocus>
+            <button id="sendBtn">Envoyer</button>
+        </div>
+    </div>
+
+    <script>
+        const inputField = document.getElementById("userInput");
+        const sendButton = document.getElementById("sendBtn");
+        const messagesContainer = document.getElementById("chatMessages");
+
+        sendButton.addEventListener("click", envoyerMessage);
+        inputField.addEventListener("keypress", (e) => { 
+            if (e.key === "Enter") envoyerMessage(); 
+        });
+
+        function ajouterMessage(texte, expediteur) {
+            const div = document.createElement("div");
+            div.classList.add("message", expediteur);
+            div.textContent = texte;
+            messagesContainer.appendChild(div);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // --- MOTEUR DE CONJUGAISON UNIVERSEL (Gère TOUS les verbes) ---
+        function conjuguerVerbeUniversel(texte) {
+            const t = texte.toLowerCase();
+            
+            // Liste de mots à ignorer pour extraire le verbe
+            const motsVides = ["conjuguer", "le", "la", "les", "un", "une", "au", "à", "en", "futur", "present", "présent", "imparfait", "passe", "passé", "simple", "compose", "composé", "plus-que-parfait", "subjonctif", "conditionnel", "imperatif", "impératif", "temps"];
+            const mots = t.split(/\s+/).filter(m => !mants && !motsVides.includes(m) && m.length > 2);
+            
+            // Recherche d'un verbe dans le texte (par défaut : manger si rien trouvé)
+            let verbe = "manger";
+            // On cherche un mot qui se termine par -er, -ir, -re
+            for (let mot of t.split(/\s+/)) {
+                if ((mot.endsWith("er") && mot !== "premier") || mot.endsWith("ir") || mot.endsWith("re")) {
+                    verbe = mot;
+                    break;
+                }
+            }
+
+            // Détection du temps demandé
+            let temps = "present";
+            if (t.includes("imparfait")) temps = "imparfait";
+            else if (t.includes("futur")) temps = "futur";
+            else if (t.includes("passe simple") || t.includes("passé simple")) temps = "passesimple";
+            else if (t.includes("passe") || t.includes("passé") || t.includes("compose") || t.includes("composé")) temps = "passecompose";
+            else if (t.includes("plus-que-parfait")) temps = "plusqueparfait";
+            else if (t.includes("subjonctif")) temps = "subjonctif";
+            else if (t.includes("conditionnel")) temps = "conditionnel";
+            else if (t.includes("imperatif") || t.includes("impératif")) temps = "imperatif";
+
+            // Extraction du radical et du groupe
+            let groupe = 3;
+            if (verbe.endsWith("er") && verbe !== "aller") groupe = 1;
+            else if (verbe.endsWith("ir") && !["venir", "tenir", "courir", "mourir", "offrir"].includes(verbe)) groupe = 2; // Approche 2e groupe (finir, grandir...)
+            if (verbe === "être" || verbe === "avoir") groupe = 0; // Cas particuliers
+
+            let radical = verbe.slice(0, -2);
+            if (verbe.endsWith("re")) radical = verbe.slice(0, -2);
+
+            // --- CAS PARTICULIER : ÊTRE & AVOIR ---
+            if (verbe === "être") {
+                if (temps === "present") return "Présent (être) :\n• Je suis\n• Tu es\n• Il/Elle est\n• Nous sommes\n• Vous êtes\n• Ils/Elles sont";
+                if (temps === "imparfait") return "Imparfait (être) :\n• J'étais\n• Tu étais\n• Il/Elle était\n• Nous étions\n• Vous étiez\n• Ils/Elles étaient";
+                if (temps === "futur") return "Futur (être) :\n• Je serai\n• Tu seras\n• Il/Elle sera\n• Nous serons\n• Vous serez\n• Ils/Elles seront";
+            }
+            if (verbe === "avoir") {
+                if (temps === "present") return "Présent (avoir) :\n• J'ai\n• Tu as\n• Il/Elle a\n• Nous avons\n• Vous avez\n• Ils/Elles ont";
+                if (temps === "imparfait") return "Imparfait (avoir) :\n• J'avais\n• Tu avais\n• Il/Elle avait\n• Nous avions\n• Vous aviez\n• Ils/Elles avaient";
+                if (temps === "futur") return "Futur (avoir) :\n• J'aurai\n• Tu auras\n• Il/Elle aura\n• Nous aurons\n• Vous aurez\n• Ils/Elles auront";
+            }
+
+            // --- RÈGLES DU 1ER GROUPE (-ER) ---
+            if (groupe === 1) {
+                // Ajustement orthographique pour les verbes en -ger (manger -> mangeons)
+                let radNous = radical;
+                if (verbe.endsWith("ger")) radNous = radical + "e";
+                // Ajustement pour les verbes en -cer (commencer -> commençons)
+                if (verbe.endsWith("cer")) {
+                    radical = radical.slice(0, -1) + "ç";
+                }
+
+                if (temps === "present") {
+                    return `Présent de l'indicatif (${verbe}) :\n• Je ${radical}e\n• Tu ${radical}es\n• Il/Elle ${radical}e\n• Nous ${radNous}ons\n• Vous ${radical}ez\n• Ils/Elles ${radical}ent`;
+                }
+                if (temps === "imparfait") {
+                    let radImp = radical;
+                    if (verbe.endsWith("ger") || verbe.endsWith("cer")) radImp = verbe.slice(0, -2); // adoucir le g/c à l'imparfait
+                    return `Imparfait de l'indicatif (${verbe}) :\n• Je ${radImp}ais\n• Tu ${radImp}ais\n• Il/Elle ${radImp}ait\n• Nous ${radImp}ions\n• Vous ${radImp}iez\n• Ils/Elles ${radImp}aient`;
+                }
+                if (temps === "futur") {
+                    return `Futur simple (${verbe}) :\n• Je ${verbe}ai\n• Tu ${verbe}as\n• Il/Elle ${verbe}a\n• Nous ${verbe}ons\n• Vous ${verbe}ez\n• Ils/Elles ${verbe}ont`;
+                }
+                if (temps === "passecompose") {
+                    let participe = radical + "é";
+                    return `Passé composé (${verbe}) :\n• J'ai ${participe}\n• Tu as ${participe}\n• Il/Elle a ${participe}\n• Nous avons ${participe}\n• Vous avez ${participe}\n• Ils/Elles ont ${participe}`;
+                }
+                if (temps === "subjonctif") {
+                    return `Subjonctif présent (${verbe}) :\n• Que je ${radical}e\n• Que tu ${radical}es\n• Qu'il/elle ${radical}e\n• Que nous ${radNous}ions\n• Que vous ${radNous}iez\n• Qu'ils/elles ${radical}ent`;
+                }
+                if (temps === "conditionnel") {
+                    return `Conditionnel présent (${verbe}) :\n• Je ${verbe}ais\n• 
